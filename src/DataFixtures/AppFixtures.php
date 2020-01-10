@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
 
         $user = new User();
         $user->setPassword($this->encoder->encodePassword($user, "supadmin"));
-        $user->setRoles(array(["ROLE_SUPER_ADMIN","ROLE_ADMIN","ROLE_CAISSIER"]));
+        $user->setRoles(array(["ROLE_SUPER_ADMIN"."->getLibelle()"]));
         $user->setUsername("bosslady");
         $user->setRole($roleAdmdinSystem);
 
