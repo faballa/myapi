@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * @ApiResource()
@@ -53,7 +54,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface
+class User implements AdvancedUserInterface
 {
     /**
      * @ORM\Id()
@@ -87,7 +88,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $IsActive;
+    private $isActive;
 
     public function getId(): ?int
     {
@@ -176,13 +177,31 @@ class User implements UserInterface
 
     public function getIsActive(): ?bool
     {
-        return $this->IsActive;
+        return $this->isActive;
     }
 
-    public function setIsActive(bool $IsActive): self
+    public function setIsActive(bool $isActive): self
     {
-        $this->IsActive = $IsActive;
+        $this->isActive = $isActive;
 
         return $this;
     }
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+    public function isEnabled()
+    {
+        return $this->isActive;
+    }
 }
+
+

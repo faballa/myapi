@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  localhost:3306
--- Généré le :  Ven 10 Janvier 2020 à 21:59
+-- Généré le :  Lun 13 Janvier 2020 à 15:27
 -- Version du serveur :  5.7.28-0ubuntu0.18.04.4
 -- Version de PHP :  7.2.24-0ubuntu0.18.04.1
 
@@ -19,37 +19,6 @@ SET time_zone = "+00:00";
 --
 -- Base de données :  `api_new_bd`
 --
-
--- --------------------------------------------------------
-
---
--- Structure de la table `migration_versions`
---
-
-CREATE TABLE `migration_versions` (
-  `version` varchar(14) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `executed_at` datetime NOT NULL COMMENT '(DC2Type:datetime_immutable)'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `role`
---
-
-CREATE TABLE `role` (
-  `id` int(11) NOT NULL,
-  `libelle` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Contenu de la table `role`
---
-
-INSERT INTO `role` (`id`, `libelle`) VALUES
-(1, 'ROLE_SUPER_ADMIN'),
-(2, 'ROLE_ADMIN'),
-(3, 'ROLE_CAISSIER');
 
 -- --------------------------------------------------------
 
@@ -71,24 +40,12 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `role_id`, `username`, `roles`, `password`, `is_active`) VALUES
-(1, 1, 'bosslady', '[\"ROLE_SUPER_ADMIN\"]', '$argon2id$v=19$m=65536,t=4,p=1$lS3crqpvy6NPmI95OI5ztw$JUGzsJN6xVTn6aNUZZUE3WnmV5AOD7tYfmopBuiLl0Y', 0),
-(3, 2, 'bosswoman', '[\"ROLE_ADMIN\"]', '123456', 1);
+(4, 4, 'bosswoman', '[\"ROLE_SUPER_ADMIN\"]', '$2y$13$i2ge0zONNiLQ6MkJK.yALOxob8uS/xvwOdu9WP4bN.ok9SNkMrO4u', 0),
+(22, 5, 'faballawadj', '[\"ROLE_ADMIN\"]', '$2y$13$CCHZHRRHUypZpwGeWixje.IyfhgY1/tLqQSVZkXE8n/LiFLoYgUj.', 1);
 
 --
 -- Index pour les tables exportées
 --
-
---
--- Index pour la table `migration_versions`
---
-ALTER TABLE `migration_versions`
-  ADD PRIMARY KEY (`version`);
-
---
--- Index pour la table `role`
---
-ALTER TABLE `role`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Index pour la table `user`
@@ -103,15 +60,10 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT pour la table `role`
---
-ALTER TABLE `role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
---
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 --
 -- Contraintes pour les tables exportées
 --

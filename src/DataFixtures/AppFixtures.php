@@ -39,10 +39,11 @@ class AppFixtures extends Fixture
         $roleCaissier = $this->getReference('role_caissier');
 
         $user = new User();
-        $user->setPassword($this->encoder->encodePassword($user, "supadmin"));
-        $user->setRoles(array(["ROLE_SUPER_ADMIN"."->getLibelle()"]));
-        $user->setUsername("bosslady");
+        $user->setPassword($this->encoder->encodePassword($user, "superadmin"));
+        $user->setRoles(array("ROLE_SUPER_ADMIN"));
+        $user->setUsername("bosswoman");
         $user->setRole($roleAdmdinSystem);
+       # $user->setIsActive(true);
 
         $manager->persist($user);
         $manager->flush();
