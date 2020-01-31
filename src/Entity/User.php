@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
@@ -64,6 +67,7 @@ class User implements AdvancedUserInterface
     private $id;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
@@ -74,6 +78,7 @@ class User implements AdvancedUserInterface
     private $roles = [];
 
     /**
+     * @Groups({"read", "write"})
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
@@ -89,6 +94,27 @@ class User implements AdvancedUserInterface
      * @ORM\Column(type="boolean")
      */
     private $isActive;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="admin_partenaire")
+     */
+    private $partenaire;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="users_createur")
+     */
+    private $comptes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="users_createurd")
+     */
+    private $depots;
+
+    public function __construct()
+    {
+        $this->comptes = new ArrayCollection();
+        $this->depots = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -201,6 +227,80 @@ class User implements AdvancedUserInterface
     public function isEnabled()
     {
         return $this->isActive;
+    }
+
+    public function getPartenaire(): ?Partenaire
+    {
+        return $this->partenaire;
+    }
+
+    public function setPartenaire(?Partenaire $partenaire): self
+    {
+        $this->partenaire = $partenaire;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Compte[]
+     */
+    public function getComptes(): Collection
+    {
+        return $this->comptes;
+    }
+
+    public function addCompte(Compte $compte): self
+    {
+        if (!$this->comptes->contains($compte)) {
+            $this->comptes[] = $compte;
+            $compte->setUsersCreateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompte(Compte $compte): self
+    {
+        if ($this->comptes->contains($compte)) {
+            $this->comptes->removeElement($compte);
+            // set the owning side to null (unless already changed)
+            if ($compte->getUsersCreateur() === $this) {
+                $compte->setUsersCreateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Depot[]
+     */
+    public function getDepots(): Collection
+    {
+        return $this->depots;
+    }
+
+    public function addDepot(Depot $depot): self
+    {
+        if (!$this->depots->contains($depot)) {
+            $this->depots[] = $depot;
+            $depot->setUsersCreateurd($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDepot(Depot $depot): self
+    {
+        if ($this->depots->contains($depot)) {
+            $this->depots->removeElement($depot);
+            // set the owning side to null (unless already changed)
+            if ($depot->getUsersCreateurd() === $this) {
+                $depot->setUsersCreateurd(null);
+            }
+        }
+
+        return $this;
     }
 }
 
