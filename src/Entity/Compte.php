@@ -29,7 +29,7 @@ class Compte
      * @Groups({"read", "write"})
      * @ORM\Column(type="integer")
      */
-    private $NumCompte;
+    private $numCompte;
 
     /**
      * @Groups({"read", "write"})
@@ -41,14 +41,14 @@ class Compte
      * @Groups({"read", "write"})
      * @ORM\Column(type="date")
      */
-    private $Datecreation;
+    private $datecreation;
 
 
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire", inversedBy="comptes")
      */
-    private $Partenaires_c;
+    private $partenaires_c;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="compte")
@@ -60,9 +60,15 @@ class Compte
      */
     private $users_createur;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AffectationCompte", mappedBy="compte_affecté")
+     */
+    private $affectation_compte;
+
     public function __construct()
     {
         $this->depots = new ArrayCollection();
+        $this->affectation_compte = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -72,12 +78,12 @@ class Compte
 
     public function getNumCompte(): ?int
     {
-        return $this->NumCompte;
+        return $this->numCompte;
     }
 
-    public function setNumCompte(int $NumCompte): self
+    public function setNumCompte(int $numCompte): self
     {
-        $this->NumCompte = $NumCompte;
+        $this->numCompte = $numCompte;
 
         return $this;
     }
@@ -96,36 +102,36 @@ class Compte
 
     public function getDatecreation(): ?\DateTimeInterface
     {
-        return $this->Datecreation;
+        return $this->datecreation;
     }
 
-    public function setDatecreation(\DateTimeInterface $Datecreation): self
+    public function setDatecreation(\DateTimeInterface $datecreation): self
     {
-        $this->Datecreation = $Datecreation;
+        $this->datecreation = $datecreation;
 
         return $this;
     }
 
     public function getUserCreateur(): ?string
     {
-        return $this->UserCreateur;
+        return $this->userCreateur;
     }
 
-    public function setUserCreateur(string $UserCreateur): self
+    public function setUserCreateur(User $userCreateur): self
     {
-        $this->UserCreateur = $UserCreateur;
+        $this->userCreateur = $userCreateur;
 
         return $this;
     }
 
     public function getPartenairesC(): ?Partenaire
     {
-        return $this->Partenaires_c;
+        return $this->partenaires_c;
     }
 
-    public function setPartenairesC(?Partenaire $Partenaires_c): self
+    public function setPartenairesC(?Partenaire $partenaires_c): self
     {
-        $this->Partenaires_c = $Partenaires_c;
+        $this->partenaires_c = $partenaires_c;
 
         return $this;
     }
@@ -169,6 +175,37 @@ class Compte
     public function setUsersCreateur(?User $users_createur): self
     {
         $this->users_createur = $users_createur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AffectationCompte[]
+     */
+    public function getAffectationCompte(): Collection
+    {
+        return $this->affectation_compte;
+    }
+
+    public function addAffectationCompte(AffectationCompte $affectationCompte): self
+    {
+        if (!$this->affectation_compte->contains($affectationCompte)) {
+            $this->affectation_compte[] = $affectationCompte;
+            $affectationCompte->setCompteAffecté($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffectationCompte(AffectationCompte $affectationCompte): self
+    {
+        if ($this->affectation_compte->contains($affectationCompte)) {
+            $this->affectation_compte->removeElement($affectationCompte);
+            // set the owning side to null (unless already changed)
+            if ($affectationCompte->getCompteAffecté() === $this) {
+                $affectationCompte->setCompteAffecté(null);
+            }
+        }
 
         return $this;
     }

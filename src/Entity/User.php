@@ -11,53 +11,33 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * @ApiResource()
+ * @ApiResource( 
  * collectionOperations={
- *          "get"={"security"="is_granted(['ROLE_ADMIN_SYSTEM','ROLE_ADMIN'])",
- *           "security_message"="Acces refuse. Seul Admin System ou Admin peut lister les elements d'une ressource",
- *            "normalisation_context"={"groups"={"get"}},
- *         },
- *          "createAdmin"={
- *          "method"="POST",
- *          "path"="/users/admin/new",
- *              "security"="is_granted('ROLE_ADMIN_SYSTEM')", 
- *               "security_message"="Acces refuse. Seul Admin System peut creer un Admin "
- *                 },
- *         "createCaissier"={
- *          "method"="POST",
- *          "path"="/users/caissier/new",
- *              "security"="is_granted(['ROLE_ADMIN'])", 
- *              "security_message"="Acces refuse. Seul Admin System ou Admin peut creer un  Caissier"
- *                 }
- *             },
- *     itemOperations={
- *          "get"={
- *   "security"="is_granted(['ROLE_ADMIN'])",
- *     "security_message"="Acces refuse. Seul Admin System ou Admin peut lister un element d'une ressource",
- *             "normalisation_context"={"groups"={"get"}}
- *              },
- *          "blockedAdmin"={
- *               "method"="PUT",
- *               "path"="/users/admin/{id}",
- *              "security"="is_granted('ROLE_ADMIN')",
- *          "security_message"="Acces refuse. Seul Admin System peut bloquer un Admin "
- *                   },
- *         "blockedCaissier"={
- *               "method"="PUT",
- *               "path"="/users/caissier/{id}",
- *              "security"="is_granted(['ROLE_ADMIN'])",
- *          "security_message"="Acces refuse. Seul Admin System ou Admin peut bloquer un Caissier"
- *                   },
- *          "delete"={"security"="is_granted('ROLE_ADMIN_SYSTEM')",
- *          "security_message"="Acces Refuse. Seul le Super Admin peut supprimer un User"
- *                  
- *                }
+ * 
+ *         "GET"={
+ *                 "access_control"="is_granted('VIEw',object)",
+ * },
+ * "post"={
+ *                 "access_control"="is_granted('ADD',object)",
+ * }
+ * 
+ * 
+ *     },
+ * 
+ *  itemOperations={
+ *       "GET"={
+ *                 "access_control"="is_granted('VIEw',previous_object)",
+ * },
+ * "put"={
+ *                 "access_control"="is_granted('EDIT',previous_object)",
+ * }
+ * 
+ * 
  *     }
- *   
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements AdvancedUserInterface
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -72,9 +52,6 @@ class User implements AdvancedUserInterface
      */
     private $username;
 
-    /**
-     * @ORM\Column(type="json")
-     */
     private $roles = [];
 
     /**
@@ -110,10 +87,32 @@ class User implements AdvancedUserInterface
      */
     private $depots;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AffectationCompte", mappedBy="user_trans")
+     */
+    private $affectation_user;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $adresse;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $telephone;
+
+    /**
+     * @ORM\Column(type="string",nullable=true, length=255)
+     */
+    private $image;
+
     public function __construct()
     {
         $this->comptes = new ArrayCollection();
         $this->depots = new ArrayCollection();
+        $this->affectation_user = new ArrayCollection();
+        $this->isActive = true;
     }
 
     public function getId(): ?int
@@ -138,23 +137,11 @@ class User implements AdvancedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
+
+    public function getRoles()
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles = $this->roles;
-
-        return $roles;
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
+        return $this->roles=["ROLE_".$this->getRole()->getLibelle()];
+       
     }
 
     /**
@@ -233,7 +220,6 @@ class User implements AdvancedUserInterface
     {
         return $this->partenaire;
     }
-
     public function setPartenaire(?Partenaire $partenaire): self
     {
         $this->partenaire = $partenaire;
@@ -299,6 +285,73 @@ class User implements AdvancedUserInterface
                 $depot->setUsersCreateurd(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AffectationCompte[]
+     */
+    public function getAffectationUser(): Collection
+    {
+        return $this->affectation_user;
+    }
+
+    public function addAffectationUser(AffectationCompte $affectationUser): self
+    {
+        if (!$this->affectation_user->contains($affectationUser)) {
+            $this->affectation_user[] = $affectationUser;
+            $affectationUser->setUserTrans($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffectationUser(AffectationCompte $affectationUser): self
+    {
+        if ($this->affectation_user->contains($affectationUser)) {
+            $this->affectation_user->removeElement($affectationUser);
+            // set the owning side to null (unless already changed)
+            if ($affectationUser->getUserTrans() === $this) {
+                $affectationUser->setUserTrans(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAdresse(): ?string
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(string $adresse): self
+    {
+        $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }

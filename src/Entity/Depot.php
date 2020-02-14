@@ -17,20 +17,16 @@ class Depot
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $NumCompte;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $Solde;
+    private $solde;
 
     /**
      * @ORM\Column(type="date")
      */
-    private $DateDepot;
+    private $dateDepot;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="depots")
@@ -47,38 +43,27 @@ class Depot
         return $this->id;
     }
 
-    public function getNumCompte(): ?int
-    {
-        return $this->NumCompte;
-    }
-
-    public function setNumCompte(int $NumCompte): self
-    {
-        $this->NumCompte = $NumCompte;
-
-        return $this;
-    }
 
     public function getSolde(): ?int
     {
-        return $this->Solde;
+        return $this->solde;
     }
 
-    public function setSolde(int $Solde): self
+    public function setSolde(int $solde): self
     {
-        $this->Solde = $Solde;
+        $this->solde = $solde;
 
         return $this;
     }
 
     public function getDateDepot(): ?\DateTimeInterface
     {
-        return $this->DateDepot;
+        return $this->dateDepot;
     }
 
-    public function setDateDepot(\DateTimeInterface $DateDepot): self
+    public function setDateDepot(\DateTimeInterface $dateDepot): self
     {
-        $this->DateDepot = $DateDepot;
+        $this->dateDepot = $dateDepot;
 
         return $this;
     }
