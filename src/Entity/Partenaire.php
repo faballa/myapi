@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ *  @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\PartenaireRepository")
  */
 class Partenaire

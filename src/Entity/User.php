@@ -11,30 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * @ApiResource( 
- * collectionOperations={
- * 
- *         "GET"={
- *                 "access_control"="is_granted('VIEw',object)",
- * },
- * "post"={
- *                 "access_control"="is_granted('ADD',object)",
- * }
- * 
- * 
- *     },
- * 
- *  itemOperations={
- *       "GET"={
- *                 "access_control"="is_granted('VIEw',previous_object)",
- * },
- * "put"={
- *                 "access_control"="is_granted('EDIT',previous_object)",
- * }
- * 
- * 
- *     }
- * )
+ * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface
