@@ -42,7 +42,15 @@ class CompteController extends AbstractController
         $role = $roleRepository->findOneBy(array('libelle' => 'PARTENAIRE'));
         $partenaire_existant = $partenaireRepository->findOneBy(array('ninea' => $values->ninea));
         
-        if($values){
+        if($values){ 
+                    if($values->solde<500000){
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Le montant initial de depot est 500000 Frc. '
+                        ];
+                        return new JsonResponse($data, 500);
+                    }
+        
             #### Creation de User Partenaire ####
             if($partenaire_existant != null){
 
